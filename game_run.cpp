@@ -42,7 +42,7 @@ int main()
     char data[3];
 
     ifstream infile;
-    infile.open("input.txt");
+    infile.open("tetris.data");
     /*rear the rows and cols and set the game matrix*/
     infile >> M >> N;
     /*something's wrong here: int  field[M][N] = {0};*/
@@ -51,15 +51,13 @@ int main()
     field = new int *[M + 4];
     for (int i = 0; i < M + 4; i++)
         field[i] = new int[N];
-    cout << "initial map" << endl;
+    // "initial map" << endl;
     for (int i = 0; i < M + 4; i++)
     {
         for (int j = 0; j < N; j++)
         {
             field[i][j] = 0;
-            cout << field[i][j];
         }
-        cout << endl;
     };
 
     /*while read block success, game continue*/
@@ -75,10 +73,6 @@ int main()
             //cout << "wrong block/End" << endl;
             break;
         }
-
-        else
-            cout << "suc" << n << endl;
-
         //set block component to a[]
         for (int i = 0; i < 4; i++)
         {
@@ -90,6 +84,7 @@ int main()
             a[3].x = 3;
             a[3].y = 3;
         }
+
         set_init_position(startpos);
         //**********************************
         //place the block at right position in map
@@ -112,41 +107,23 @@ int main()
         for (int j = 0; j < N; j++)
             if (field[3][j])
                 gameover = 1;
-
-        for (int i = 0; i < M + 4; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                cout << field[i][j];
-            }
-            cout << endl;
-        }
     }
     infile.close();
 
     /* write the result to output.txt*/
-    /*ofstream outfile;
-    outfile.open("output.txt");
-    //cout << "Writing to the file" << endl;
-    for (int i = 0; i < M; i++)
-        for (int j = 0; j < N; j++)
-            outfile << field[i][j] << endl;
-    outfile.close();
-
-    //read out file on terminal
-    infile.open("output.txt");*/
-    cout << "Reading from the file" << endl;
-
+    ofstream outfile;
+    outfile.open("tetris.final");
     for (int i = 4; i < M + 4; i++)
     {
         for (int j = 0; j < N; j++)
         {
-            cout << field[i][j];
+            outfile << field[i][j];
+            //cout << field[i][j];
         }
-        cout << endl;
+        outfile << endl;
+        //cout << endl;
     }
-    //infile.close();
-    cout << count;
+    outfile.close();
     return 0;
 }
 
@@ -177,13 +154,13 @@ bool check(int **map)
     {
         if (a[i].y >= M + 4)
         {
-            cout << "out of the map" << endl;
+            //cout << "out of the map" << endl;
             return 0;
         }
 
         else if (map[a[i].y][a[i].x])
         {
-            cout << "onto previous brick" << endl;
+            //cout << "onto previous brick" << endl;
             return 0;
         }
     }
