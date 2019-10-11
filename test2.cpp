@@ -25,10 +25,20 @@ bool check()
 {
     for (int i = 0; i < 4; i++)
     {
-        if (a[i].x < 0 || a[i].x >= N || a[i].y >= M)
+        if (a[i].y >= M + 4)
             return 0;
-        else if (field[a[i].y][a[i].x])
+        else if (field[a[i].x][a[i].y])
             return 0;
     }
     return 1;
+}
+
+void set_init_position(int startpoint)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        a[i].x = startpoint + a[i].x - 1;
+        if (a[i].x < 0 || a[i].x >= N)
+            gameover = 1;
+    }
 }
