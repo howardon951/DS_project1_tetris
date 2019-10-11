@@ -4,9 +4,10 @@ using namespace std;
 
 int M, N;
 int checkblocks(char input[]);
-void buildmap(int rows, int cols);
+void moveline(int line, int **map);
 void set_init_position(int startpoint);
 bool check(int **map);
+void check_line(int **map, int line);
 struct Point
 {
     int x, y;
@@ -42,10 +43,10 @@ int main()
 
     ifstream infile;
     infile.open("input.txt");
-    //rear the rows and cols and set the game matrix
+    /*rear the rows and cols and set the game matrix*/
     infile >> M >> N;
-    //something's wrong here: int  field[M][N] = {0};
-    //dynamically set my 2-d map
+    /*something's wrong here: int  field[M][N] = {0};*/
+    /*dynamically set my 2-d map*/
     int **field;
     field = new int *[M + 4];
     for (int i = 0; i < M + 4; i++)
@@ -61,7 +62,7 @@ int main()
         cout << endl;
     };
 
-    //while read block success, game continue
+    /*while read block success, game continue*/
     while (infile >> data && !gameover) // what's wrong?!(&& data != "End")
     {
         //rear the start position of the current block
@@ -71,7 +72,7 @@ int main()
         int n = checkblocks(data);
         if (n == -1)
         {
-            cout << "wrong block/End" << endl;
+            //cout << "wrong block/End" << endl;
             break;
         }
 
@@ -89,28 +90,29 @@ int main()
             a[3].x = 3;
             a[3].y = 3;
         }
-        for (int i = 0; i < 4; i++)
-        {
-            cout << a[i].x << " " << a[i].y << endl;
-        }
         set_init_position(startpos);
-        for (int i = 0; i < 4; i++)
-        {
-            cout << a[i].x << " " << a[i].y << endl;
-        }
+        //**********************************
         //place the block at right position in map
         while (check(field))
         {
             for (int i = 0; i < 4; i++)
             {
-                b[i].x = a[i].x;
-                b[i].y = a[i].y;
+                b[i] = a[i];
                 a[i].y += 1;
-                cout << a[i].x << a[i].y << endl;
+                //cout << a[i].x << a[i].y << endl;
             }
         }
+        //**************************************
         for (int i = 0; i < 4; i++)
             field[b[i].y][b[i].x] = 1;
+
+        for (int i = 0; i < 4; i++)
+            check_line(field, b[i].y); //base on descending bricks
+
+        for (int j = 0; j < N; j++)
+            if (field[3][j])
+                gameover = 1;
+
         for (int i = 0; i < M + 4; i++)
         {
             for (int j = 0; j < N; j++)
@@ -122,7 +124,7 @@ int main()
     }
     infile.close();
 
-    // write the result to output.txt
+    /* write the result to output.txt*/
     /*ofstream outfile;
     outfile.open("output.txt");
     //cout << "Writing to the file" << endl;
@@ -135,7 +137,7 @@ int main()
     infile.open("output.txt");*/
     cout << "Reading from the file" << endl;
 
-    for (int i = 0; i < M + 4; i++)
+    for (int i = 4; i < M + 4; i++)
     {
         for (int j = 0; j < N; j++)
         {
@@ -169,7 +171,7 @@ int checkblocks(char input[])
 
 bool check(int **map)
 {
-    cout << "#" << count << endl;
+    //cout << "#" << count << endl;
     count++;
     for (int i = 0; i < 4; i++)
     {
@@ -194,5 +196,28 @@ void set_init_position(int startpoint)
         a[i].x = startpoint + a[i].x - 1;
         if (a[i].x < 0 || a[i].x >= N)
             gameover = 1;
+    }
+}
+
+void check_line(int **map, int line)
+{
+    int count = 0;
+    for (int j = 0; j < N; j++)
+    {
+        if (map[line][j])
+            count++;
+    }
+    if (count == N)
+        moveline(line, map);
+}
+
+void moveline(int line, int **map)
+{
+    for (int i = line; i > 0; i--)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            map[i][j] = map[i - 1][j];
+        }
     }
 }
