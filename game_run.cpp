@@ -40,18 +40,16 @@ int figure[19][4] =
 int main()
 {
     char data[3];
-
+    /*read the rows and cols and set the game matrix*/
     ifstream infile;
     infile.open("tetris.data");
-    /*rear the rows and cols and set the game matrix*/
     infile >> M >> N;
-    /*something's wrong here: int  field[M][N] = {0};*/
+
     /*dynamically set my 2-d map*/
-    int **field;
+    int **field; /* something's wrong with this initialization : int  field[M][N] = {0}; */
     field = new int *[M + 4];
     for (int i = 0; i < M + 4; i++)
         field[i] = new int[N];
-    // "initial map" << endl;
     for (int i = 0; i < M + 4; i++)
     {
         for (int j = 0; j < N; j++)
@@ -61,33 +59,31 @@ int main()
     };
 
     /*while read block success, game continue*/
-    while (infile >> data && !gameover) // what's wrong?!(&& data != "End")
+    while (infile >> data && !gameover) /* what's wrong with : (&& data != "End") ???*/
     {
-        //rear the start position of the current block
+
         int startpos;
-        infile >> startpos;
-        //check which type of block it is
-        int n = checkblocks(data);
+        infile >> startpos;        //read the start position of the current block
+        int n = checkblocks(data); //check what type of block it is
         if (n == -1)
         {
-            //cout << "wrong block/End" << endl;
             break;
         }
-        //set block component to a[]
+        /*setting the block's 4 bricks into a[]*/
         for (int i = 0; i < 4; i++)
         {
             a[i].x = figure[n][i] % 3;
             a[i].y = figure[n][i] / 3;
         }
-        if (n == 17) //special case
+        if (n == 17) //special case of I2
         {
             a[3].x = 3;
             a[3].y = 3;
         }
 
         set_init_position(startpos);
-        //**********************************
-        //place the block at right position in map
+        //**************************************
+        /*place the block at the right position in map*/
         while (check(field))
         {
             for (int i = 0; i < 4; i++)
@@ -110,7 +106,7 @@ int main()
     }
     infile.close();
 
-    /* write the result to output.txt*/
+    /*  write the result to output.final */
     ofstream outfile;
     outfile.open("tetris.final");
     for (int i = 4; i < M + 4; i++)
@@ -118,10 +114,8 @@ int main()
         for (int j = 0; j < N; j++)
         {
             outfile << field[i][j];
-            //cout << field[i][j];
         }
         outfile << endl;
-        //cout << endl;
     }
     outfile.close();
     return 0;
@@ -148,8 +142,7 @@ int checkblocks(char input[])
 
 bool check(int **map)
 {
-    //cout << "#" << count << endl;
-    count++;
+    //count++;
     for (int i = 0; i < 4; i++)
     {
         if (a[i].y >= M + 4)
@@ -157,7 +150,6 @@ bool check(int **map)
             //cout << "out of the map" << endl;
             return 0;
         }
-
         else if (map[a[i].y][a[i].x])
         {
             //cout << "onto previous brick" << endl;
@@ -166,6 +158,7 @@ bool check(int **map)
     }
     return 1;
 }
+
 void set_init_position(int startpoint)
 {
     for (int i = 0; i < 4; i++)
