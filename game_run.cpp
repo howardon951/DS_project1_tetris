@@ -13,7 +13,6 @@ struct Point
     int x, y;
 } a[4], b[4];
 bool gameover = 0;
-static int count = 1;
 
 int figure[19][4] =
     {
@@ -37,6 +36,7 @@ int figure[19][4] =
         9, 10, 11, 12, //I2
         6, 7, 9, 10    //O
 };
+/*********************main start*******************************/
 int main()
 {
     char data[3];
@@ -61,11 +61,10 @@ int main()
     /*while read block success, game continue*/
     while (infile >> data && !gameover) /* what's wrong with : (&& data != "End") ???*/
     {
-
         int startpos;
         infile >> startpos;        //read the start position of the current block
         int n = checkblocks(data); //check what type of block it is
-        if (n == -1)
+        if (n == -1)               //if "End", end the game
         {
             break;
         }
@@ -80,10 +79,8 @@ int main()
             a[3].x = 3;
             a[3].y = 3;
         }
-
-        set_init_position(startpos);
-        //**************************************
         /*place the block at the right position in map*/
+        set_init_position(startpos);
         while (check(field))
         {
             for (int i = 0; i < 4; i++)
@@ -93,13 +90,12 @@ int main()
                 //cout << a[i].x << a[i].y << endl;
             }
         }
-        //**************************************
         for (int i = 0; i < 4; i++)
             field[b[i].y][b[i].x] = 1;
-
+        /*check whether the fallen bricks makes a vertical line in map, if so, move each upper line down*/
         for (int i = 0; i < 4; i++)
             check_line(field, b[i].y); //base on descending bricks
-
+        /*if the bricks is on the illegal region, gameover=1 */
         for (int j = 0; j < N; j++)
             if (field[3][j])
                 gameover = 1;
@@ -120,7 +116,7 @@ int main()
     outfile.close();
     return 0;
 }
-
+/********************main end ********************************/
 int checkblocks(char input[])
 {
     if (input[0] == 'T')
@@ -142,18 +138,15 @@ int checkblocks(char input[])
 
 bool check(int **map)
 {
-    //count++;
     for (int i = 0; i < 4; i++)
     {
         if (a[i].y >= M + 4)
         {
-            //cout << "out of the map" << endl;
-            return 0;
+            return 0; //cout << "on the bottom of the map" << endl;
         }
         else if (map[a[i].y][a[i].x])
         {
-            //cout << "onto previous brick" << endl;
-            return 0;
+            return 0; //cout << "onto previous brick" << endl;
         }
     }
     return 1;
